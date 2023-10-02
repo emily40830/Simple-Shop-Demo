@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import CartProvider from "./contexts/CartContext";
 import HomePage from "./pages/HomePage";
 
