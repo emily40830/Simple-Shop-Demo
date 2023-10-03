@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   createCartProduct,
   deleteCartProduct,
@@ -10,11 +9,13 @@ const defaultContext = {
   cartProducts: [],
   isEmpty: true,
   addProductToCart: async (productFieldId, quantity) => {},
+  // HW: Implement removeProduct
   removeProduct: async (cartProductId) => {},
+  // HW: Implement updateProductQuantity
   updateProductQuantity: async () => {},
   clearCart: async () => {},
 };
-export const CartContext = createContext(defaultContext);
+const CartContext = createContext(defaultContext);
 
 const CartProvider = ({ children }) => {
   const [cartProducts, setCartProducts] = useState(defaultContext.cartProducts);
@@ -61,10 +62,10 @@ const CartProvider = ({ children }) => {
             console.error(error);
           }
         },
-        updateProductQuantity: () => {},
+        updateProductQuantity: async () => {},
         clearCart: async () => {
           for (const cartProduct of cartProducts) {
-            await deleteCartProduct(cartProduct.id);
+            await deleteCartProduct(cartProduct.fieldId);
           }
           await fetchCartProducts();
         },
@@ -75,4 +76,5 @@ const CartProvider = ({ children }) => {
   );
 };
 
+export { CartContext };
 export default CartProvider;

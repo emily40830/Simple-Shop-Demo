@@ -2,10 +2,12 @@ import { CartContext } from "../../contexts/CartContext";
 import { Button } from "antd";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import CartProductRow from "./CartProductRow";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 const CartPage = () => {
-  const { cartProducts, totalPrice } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
+  const { cartProducts, totalPrice, clearCart, isEmpty } =
+    useContext(CartContext);
 
   return (
     <DefaultLayout>
@@ -16,7 +18,18 @@ const CartPage = () => {
       </div>
       <hr />
       <div className="flex justify-end mb-10">Total: NT$ {totalPrice} </div>
-      <Button type="primary" className="bg-primary" block>
+      <Button
+        type="primary"
+        className="bg-primary"
+        block
+        loading={loading}
+        disabled={isEmpty}
+        onClick={() => {
+          setLoading(true);
+          alert("您確定要送出訂單？");
+          clearCart().finally(() => setLoading(false));
+        }}
+      >
         送出定單
       </Button>
     </DefaultLayout>
