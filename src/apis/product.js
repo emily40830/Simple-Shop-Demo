@@ -1,46 +1,15 @@
-import axios from "axios";
-
-const apiHost = import.meta.env.VITE_API_HOST;
-const apiToken = import.meta.env.VITE_TOKEN;
-
-const appAxios = axios.create({ baseURL: apiHost });
-
-appAxios.interceptors.request.use(
-  (configs) => {
-    const token = apiToken;
-
-    configs.headers.authorization = `Bearer ${token}`;
-    return configs;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-appAxios.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
-  (error) => {
-    let { response } = error;
-    return Promise.reject(response);
-  }
-);
+import appAxios from "./appAxios";
 
 export const getProductList = async () => {
-  const url = apiHost + "Product";
-
-  const { records } = await appAxios.get(url);
+  const { records } = await appAxios.get("Product");
 
   return records;
 };
 
 export const getProduct = async (productFieldId) => {
-  const url = `${apiHost}/Product/${productFieldId}`;
+  const data = await appAxios.get(`Product/${productFieldId}`);
 
-  const { records } = await appAxios.get(url);
-
-  return records;
+  return data;
 };
 
 // const productIds = ["p001", "p002", "p003", "p004", "p005", "p006"];
