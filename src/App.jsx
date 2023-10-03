@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ErrorPage from "./pages/ErrorPage";
 import CartPage from "./pages/CartPage";
+import CartProvider from "./contexts/CartContext";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -22,5 +23,9 @@ export default function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
+  );
 }
