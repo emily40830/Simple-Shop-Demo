@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, InputNumber, Skeleton } from "antd";
 
 import PriceLabel from "../../components/product/PriceLabel";
@@ -8,13 +8,17 @@ import SpecSelect from "../../components/product/SpecSelect";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
 import { useProduct } from "../../hooks";
+import { CartContext } from "../../contexts/CartContext";
 
 const ProductDetailsPage = () => {
-  const { productId } = useParams();
+  const { productFieldId } = useParams();
+  const navigate = useNavigate();
+  const { addProductToCart } = useContext(CartContext);
   const { product, productSpecs, selectedSpec, changeSelectedSpec } =
-    useProduct(productId);
+    useProduct(productFieldId);
 
   const [quantity, setQuantity] = useState(1);
+  const [addToCartLoading, setAddToCartLoading] = useState(false);
 
   const handleSelect = (value) => {
     changeSelectedSpec(value);
@@ -59,11 +63,27 @@ const ProductDetailsPage = () => {
                 addonAfter="件"
               />
             </div>
-            <Link to="/cart">
-              <Button type="primary" block className="bg-primary">
-                立即購買
-              </Button>
-            </Link>
+
+            <Button
+              type="primary"
+              block
+              loading={addToCartLoading}
+              className="bg-primary"
+              onClick={() => {
+                setAddToCartLoading(true);
+                addProductToCart(productFieldId, quantity)
+                  .then(() => {
+                    setAddToCartLoading(false);
+                    navigate("/cart");
+                  })
+                  .catch((error) => console.error(error))
+                  .finally(() => {
+                    setAddToCartLoading(false);
+                  });
+              }}
+            >
+              立即購買
+            </Button>
           </div>
         </div>
       ) : (

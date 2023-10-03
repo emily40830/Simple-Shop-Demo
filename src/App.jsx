@@ -18,7 +18,7 @@ export default function App() {
     },
     {
       id: "product",
-      path: "/p/:productId",
+      path: "/p/:productFieldId",
       element: <ProductDetailsPage />,
     },
   ]);

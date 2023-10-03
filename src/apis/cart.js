@@ -6,13 +6,13 @@ export const getCartProducts = async () => {
   return records;
 };
 
-export const createCartProduct = async ({ count, productFieldId }) => {
+export const createCartProduct = async ({ productFieldId, count }) => {
   const payload = {
     records: [
       {
         fields: {
           count,
-          product_id: productFieldId,
+          product_id: [productFieldId],
         },
       },
     ],
@@ -33,7 +33,7 @@ export const patchCartProduct = async ({
         id: cartProductId,
         fields: {
           count,
-          product_id: productFieldId,
+          product_id: [productFieldId],
         },
       },
     ],
