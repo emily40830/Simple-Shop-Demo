@@ -1,64 +1,28 @@
-import { Button, InputNumber } from "antd";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Button, InputNumber, Skeleton } from "antd";
+
 import PriceLabel from "../../components/product/PriceLabel";
 import ProductImage from "../../components/product/ProductImage";
 import SpecSelect from "../../components/product/SpecSelect";
-import { getProduct } from "../../apis/product";
-import { useParams } from "react-router-dom";
 import DefaultLayout from "../../layouts/DefaultLayout";
 
-import { useEffect, useState } from "react";
-import { getSpec } from "../../apis/spec";
+import { useProduct } from "../../hooks";
 
 const ProductDetailsPage = () => {
   const { productId } = useParams();
-  const [product, setProduct] = useState(null);
-  const [specs, setSpecs] = useState([]);
-  const [selectedSpec, setSelectedSpec] = useState("S");
+  const { product, productSpecs, selectedSpec, changeSelectedSpec } =
+    useProduct(productId);
+
   const [quantity, setQuantity] = useState(1);
 
   const handleSelect = (value) => {
-    setSelectedSpec(value);
+    changeSelectedSpec(value);
   };
 
-  const currentSpec = specs
-    ? specs.find((spec) => spec.size === selectedSpec)
+  const currentSpec = productSpecs
+    ? productSpecs.find((spec) => spec.size === selectedSpec)
     : null;
-
-  useEffect(() => {
-    getProduct(productId)
-      .then((record) => {
-        console.log("record", record);
-        const newProduct = {
-          ...record.fields,
-          fieldId: record.id,
-          specIds: record.fields.Spec,
-        };
-        setProduct(newProduct);
-        return newProduct;
-      })
-      .then((product) => {
-        console.log("product", product);
-        const specIds = product.Spec;
-        return Promise.all(specIds.map((specId) => getSpec(specId)));
-      })
-      .then((specs) => {
-        console.log("specs", specs);
-        const newSpecs = specs.map((spec) => {
-          return {
-            fieldId: spec.id,
-            id: spec.fields.id,
-            size: spec.fields.name,
-            inventory: spec.fields.inventory,
-          };
-        });
-        setSpecs(newSpecs);
-        setSelectedSpec(newSpecs[0].size);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [productId]);
 
   return (
     <DefaultLayout>
@@ -71,10 +35,10 @@ const ProductDetailsPage = () => {
 
             <PriceLabel className="mb-3">NT$ {product.price}</PriceLabel>
             <div className="mb-3 flex items-center">
-              {specs ? (
+              {productSpecs ? (
                 <SpecSelect
                   value={selectedSpec}
-                  specs={specs}
+                  specs={productSpecs}
                   onSelect={handleSelect}
                   className="mr-5"
                 />
@@ -103,7 +67,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       ) : (
-        <div>Loading ...</div>
+        <Skeleton />
       )}
     </DefaultLayout>
   );
