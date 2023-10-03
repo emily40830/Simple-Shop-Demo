@@ -1,12 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { getProductList } from "../../apis/product";
 import ProductCard from "../../components/product/ProductCard";
 
-const productData = getProductList();
-
 const HomePage = () => {
-  const [products, setProducts] = useState(productData);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getProductList()
+      .then((records) => {
+        const products = records.map((record) => {
+          return {
+            fieldId: record.id,
+            ...record.fields,
+          };
+        });
+        setProducts(products);
+      })
+      .catch((error) => console.error(error));
+  }, []);
   return (
     <DefaultLayout>
       <div className="grid grid-cols-1 md:grid-cols-3 p-5 mb-3">
